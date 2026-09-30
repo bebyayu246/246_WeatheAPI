@@ -3,37 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation</title>
+    <title>Geolocation Search</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #fce4ec; /* Soft pink background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a4a4a;
+        }
+        .card {
+            background-color: #ffffff; /* White card */
+            border-radius: 16px;
+            padding: 35px;
+            width: 480px;
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.1); /* Soft pink shadow */
+            border: 1px solid #f8bbd0;
+        }
+        .header-date {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #d81b60; /* Dark pink */
+            margin-bottom: 12px;
+            letter-spacing: 1.5px;
+        }
+        .divider {
+            border: none;
+            border-top: 2px dashed #f8bbd0;
+            margin-bottom: 20px;
+        }
+        .student-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .student-name {
+            font-weight: 600;
+            color: #c2185b;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .student-id {
+            font-size: 0.85rem;
+            color: #880e4f;
+            background-color: #fce4ec;
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+        .search-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #f8bbd0;
+            border-radius: 8px;
+            background-color: #fffafb;
+            color: #333;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-input::placeholder {
+            color: #b0b0b0; /* Abu-abu agar terlihat jelas sebagai placeholder */
+        }
+        .search-input:focus {
+            border-color: #d81b60;
+            box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+        }
+        .search-btn {
+            background-color: #d81b60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .search-btn:hover {
+            background-color: #c2185b;
+        }
+        .search-btn:active {
+            transform: scale(0.96);
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            background-color: #fffafb;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f06292;
+        }
+        .result-label {
+            color: #880e4f;
+            font-weight: 600;
+            font-size: 0.8rem;
+            width: 40%;
+        }
+        .result-value {
+            color: #4a4a4a;
+            text-align: right;
+            width: 60%;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <h3>Nama :</h3>
-    <h3>NIM :</h3>
 
-    <p> 
-        Kota : 
-        <span id="lokasi"></span><br>
-    </p>
+    <div class="card">
+        <div class="header-date">Pengembangan Aplikasi Web</div>
+        <hr class="divider">
+        
+        <div class="student-info">
+            <div class="student-name">Beby Ayu Verananda</div>
+            <div class="student-id">20240140246</div>
+        </div>
 
-    <hr>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Masukkan nama kota...">
+            <button class="search-btn" onclick="searchLocation()">Search</button>
+        </div>
 
-    <p>
-        Koordinat :
-        <span id="negara"></span>
-    </p>
-    
+        <div class="result-row">
+            <div class="result-label">PLACE NAME</div>
+            <div class="result-value" id="placeName">-</div>
+        </div>
+        <div class="result-row">
+            <div class="result-label">MATCHING TEXT</div>
+            <div class="result-value" id="matchingText">-</div>
+        </div>
+        <div class="result-row">
+            <div class="result-label">TIPE</div>
+            <div class="result-value" id="tipe">-</div>
+        </div>
+        <div class="result-row">
+            <div class="result-label">KOORDINAT</div>
+            <div class="result-value" id="koordinat">-</div>
+        </div>
+    </div>
+
     <script>
-        fetch("/api/lokasi")
-            .then(response => response.json())
-            .then(data => {
+        function searchLocation() {
+            const searchInput = document.getElementById('searchInput').value;
+            const query = searchInput.trim() || 'Jakarta';
+            
+            fetch(`/api/lokasi?kota=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        return;
+                    }
+                    document.getElementById('placeName').innerText = data.place_name || '-';
+                    document.getElementById('matchingText').innerText = data.matching_text || '-';
+                    document.getElementById('tipe').innerText = data.tipe || '-';
+                    document.getElementById('koordinat').innerText = data.koordinat || '-';
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    alert('Gagal mengambil data lokasi. Silakan periksa terminal node js atau API key Anda.');
+                });
+        }
 
-               console.log(data);
-
-                document.getElementById("lokasi").innerHTML = data.kota;
-                document.getElementById("negara").innerHTML = data.koordinat;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // Trigger default search on load for Jakarta
+        searchLocation();
+        
+        // Add enter key support
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchLocation();
+            }
+        });
     </script>
 
 </body>
