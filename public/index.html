@@ -4,156 +4,291 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geolocation Search</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
         }
+
         body {
-            background-color: #fce4ec; /* Soft pink background */
+            /* Pink & White Gradient Background */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #4a4a4a;
-        }
-        .card {
-            background-color: #ffffff; /* White card */
-            border-radius: 16px;
-            padding: 35px;
-            width: 480px;
-            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.1); /* Soft pink shadow */
-            border: 1px solid #f8bbd0;
-        }
-        .header-date {
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #d81b60; /* Dark pink */
-            margin-bottom: 12px;
-            letter-spacing: 1.5px;
-        }
-        .divider {
-            border: none;
-            border-top: 2px dashed #f8bbd0;
-            margin-bottom: 20px;
-        }
-        .student-info {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .student-name {
-            font-weight: 600;
-            color: #c2185b;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        .student-id {
-            font-size: 0.85rem;
-            color: #880e4f;
-            background-color: #fce4ec;
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 20px;
-        }
-        .search-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 35px;
-        }
-        .search-input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #f8bbd0;
-            border-radius: 8px;
-            background-color: #fffafb;
             color: #333;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s;
+            padding: 20px;
         }
-        .search-input::placeholder {
-            color: #b0b0b0; /* Abu-abu agar terlihat jelas sebagai placeholder */
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(255, 117, 140, 0.15); /* Pink tinted shadow */
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
         }
-        .search-input:focus {
-            border-color: #d81b60;
-            box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+
+        .card:hover {
+            transform: translateY(-5px);
         }
-        .search-btn {
-            background-color: #d81b60;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 25px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        .search-btn:hover {
-            background-color: #c2185b;
-        }
-        .search-btn:active {
-            transform: scale(0.96);
-        }
-        .result-row {
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            background-color: #fffafb;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border-left: 4px solid #f06292;
+            margin-bottom: 25px;
         }
-        .result-label {
-            color: #880e4f;
+
+        .course-name {
+            font-size: 0.85rem;
             font-weight: 600;
-            font-size: 0.8rem;
-            width: 40%;
+            color: #d81b60; /* Dark pink */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(216, 27, 96, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
         }
-        .result-value {
-            color: #4a4a4a;
-            text-align: right;
-            width: 60%;
+
+        .student-info {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .student-name {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .student-id {
+            font-size: 0.9rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+            display: flex;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .search-icon-wrapper {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 16px 15px 16px 45px;
+            border: 2px solid transparent;
+            background-color: #fff5f7; /* Very light pink background */
+            color: #2d3748;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .search-input:focus {
+            background-color: #fff;
+            border-color: #ff758c; /* Vibrant pink */
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        .search-btn:active {
+            opacity: 1;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .result-item {
+            background-color: #fff5f7;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            border: 1px solid #ffe2e9;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.08);
+            border-color: #fbc2eb;
+        }
+
+        .result-icon {
+            background: linear-gradient(135deg, #ffe2e2 0%, #ffc3db 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d81b60; /* Icon color */
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .result-content {
+            flex: 1;
+        }
+
+        .result-label {
+            color: #718096;
             font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
         }
+
+        .result-value {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        /* Loading animation */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .is-loading .btn-text, .is-loading .btn-icon {
+            display: none;
+        }
+
+        .is-loading .spinner {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div class="header-date">Pengembangan Aplikasi Web</div>
-        <hr class="divider">
+        <div class="header-top">
+            <div class="course-name"><i class="fa-solid fa-code"></i> PWS Pertemuan 3</div>
+            <div class="header-date" style="color: #a0aec0; font-size: 0.85rem;"><i class="fa-regular fa-calendar-alt"></i> Web Apps</div>
+        </div>
         
         <div class="student-info">
             <div class="student-name">Beby Ayu Verananda</div>
-            <div class="student-id">20240140246</div>
+            <div class="student-id">
+                <i class="fa-solid fa-id-card"></i> 20240140246
+            </div>
         </div>
 
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="Masukkan nama kota...">
-            <button class="search-btn" onclick="searchLocation()">Search</button>
+            <div class="search-icon-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari nama kota, tempat...">
+            <button class="search-btn" id="searchBtn" onclick="searchLocation()">
+                <span class="btn-icon"><i class="fa-solid fa-location-arrow"></i></span>
+                <span class="btn-text">Cari</span>
+                <div class="spinner"></div>
+            </button>
         </div>
 
-        <div class="result-row">
-            <div class="result-label">PLACE NAME</div>
-            <div class="result-value" id="placeName">-</div>
-        </div>
-        <div class="result-row">
-            <div class="result-label">MATCHING TEXT</div>
-            <div class="result-value" id="matchingText">-</div>
-        </div>
-        <div class="result-row">
-            <div class="result-label">TIPE</div>
-            <div class="result-value" id="tipe">-</div>
-        </div>
-        <div class="result-row">
-            <div class="result-label">KOORDINAT</div>
-            <div class="result-value" id="koordinat">-</div>
+        <div class="results-grid">
+            <div class="result-item">
+                <div class="result-icon">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <div class="result-content">
+                    <div class="result-label">Place Name</div>
+                    <div class="result-value" id="placeName">-</div>
+                </div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-icon">
+                    <i class="fa-solid fa-spell-check"></i>
+                </div>
+                <div class="result-content">
+                    <div class="result-label">Matching Text</div>
+                    <div class="result-value" id="matchingText">-</div>
+                </div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div class="result-content">
+                    <div class="result-label">Tipe Lokasi</div>
+                    <div class="result-value" id="tipe">-</div>
+                </div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-icon">
+                    <i class="fa-solid fa-earth-asia"></i>
+                </div>
+                <div class="result-content">
+                    <div class="result-label">Koordinat (Long, Lat)</div>
+                    <div class="result-value" id="koordinat">-</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -161,6 +296,10 @@
         function searchLocation() {
             const searchInput = document.getElementById('searchInput').value;
             const query = searchInput.trim() || 'Jakarta';
+            const btn = document.getElementById('searchBtn');
+            
+            // Add loading state
+            btn.classList.add('is-loading');
             
             fetch(`/api/lokasi?kota=${encodeURIComponent(query)}`)
                 .then(response => {
@@ -172,21 +311,25 @@
                 .then(data => {
                     if (data.message) {
                         alert(data.message);
-                        return;
+                    } else {
+                        document.getElementById('placeName').innerText = data.place_name || '-';
+                        document.getElementById('matchingText').innerText = data.matching_text || '-';
+                        document.getElementById('tipe').innerText = data.tipe || '-';
+                        document.getElementById('koordinat').innerText = data.koordinat || '-';
                     }
-                    document.getElementById('placeName').innerText = data.place_name || '-';
-                    document.getElementById('matchingText').innerText = data.matching_text || '-';
-                    document.getElementById('tipe').innerText = data.tipe || '-';
-                    document.getElementById('koordinat').innerText = data.koordinat || '-';
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
-                    alert('Gagal mengambil data lokasi. Silakan periksa terminal node js atau API key Anda.');
+                    alert('Gagal mengambil data lokasi. Silakan periksa terminal Node.js atau koneksi Anda.');
+                })
+                .finally(() => {
+                    // Remove loading state
+                    btn.classList.remove('is-loading');
                 });
         }
 
         // Trigger default search on load for Jakarta
-        searchLocation();
+        window.onload = searchLocation;
         
         // Add enter key support
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
